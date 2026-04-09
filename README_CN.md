@@ -8,6 +8,10 @@
 
 > Claude Code 限额自动恢复工具。透明 PTY 代理，窗口不关闭，限额重置后自动继续。
 
+<p align="center">
+  <img src="./demo.svg" alt="Auto-Continue Demo" width="620">
+</p>
+
 ## 解决什么问题
 
 Claude Code 重度用户（尤其是 Max 订阅）经常触发 5 小时限额。限额重置后，会话只是停在那里等你手动输入 "continue"。如果你离开了电脑、同时开着多个会话、或者没注意到——工作就卡住了。

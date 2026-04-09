@@ -9,6 +9,10 @@
 
 > Automatically resume Claude Code sessions when rate limits reset. A transparent PTY wrapper that keeps your window open.
 
+<p align="center">
+  <img src="./demo.svg" alt="Auto-Continue Demo" width="620">
+</p>
+
 ## The Problem
 
 Heavy Claude Code users (especially on Max plans) frequently hit the 5-hour rate limit. When the limit resets, the session just sits there waiting for you to manually type "continue". If you're AFK, running multiple sessions, or simply didn't notice -- your work stalls.

@@ -4,6 +4,6 @@ node_modules/
 Thumbs.db
 *.png
 *.jpg
-*.gif
+*.cast
 .claude/
 .env

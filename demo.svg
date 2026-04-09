@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="420" viewBox="0 0 620 420">
+  <defs>
+    <style>
+      .bg { fill: #1e1e2e; }
+      .title-bar { fill: #313244; }
+      .dot-red { fill: #f38ba8; }
+      .dot-yellow { fill: #f9e2af; }
+      .dot-green { fill: #a6e3a1; }
+      .title-text { fill: #cdd6f4; font-family: 'Segoe UI', sans-serif; font-size: 12px; }
+      .t { font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; font-size: 13px; }
+      .white { fill: #cdd6f4; }
+      .bold { fill: #cdd6f4; font-weight: bold; }
+      .dim { fill: #6c7086; }
+      .cyan { fill: #89dceb; }
+      .yellow { fill: #f9e2af; }
+      .green { fill: #a6e3a1; }
+      .gray { fill: #585b70; }
+    </style>
+  </defs>
+
+  <!-- Window frame -->
+  <rect class="bg" width="620" height="420" rx="8"/>
+  <rect class="title-bar" width="620" height="32" rx="8"/>
+  <rect class="bg" y="24" width="620" height="8"/>
+
+  <!-- Traffic lights -->
+  <circle class="dot-red" cx="18" cy="16" r="6"/>
+  <circle class="dot-yellow" cx="38" cy="16" r="6"/>
+  <circle class="dot-green" cx="58" cy="16" r="6"/>
+  <text class="title-text" x="260" y="20" text-anchor="middle">auto-continue — Claude Code</text>
+
+  <!-- Terminal content -->
+  <text class="t bold" x="16" y="60">  Claude Code <tspan class="dim">v2.3.0</tspan></text>
+
+  <text class="t dim" x="16" y="82">  cwd: ~/my-project</text>
+
+  <text class="t cyan" x="16" y="112">  &gt; Analyzing codebase...</text>
+  <text class="t cyan" x="16" y="132">  &gt; Refactoring auth module...</text>
+  <text class="t cyan" x="16" y="152">  &gt; Running tests...</text>
+
+  <text class="t yellow" x="16" y="182">  ⚠ You've hit your limit · resets 3:00pm</text>
+
+  <!-- Auto-Continue status -->
+  <text class="t yellow" x="16" y="212">[Auto-Continue] Rate limit detected. Will resume at 15:00:30</text>
+
+  <text class="t gray" x="16" y="238">[Auto-Continue] ~45 min until resume</text>
+  <text class="t gray" x="16" y="258">[Auto-Continue] ~30 min until resume</text>
+  <text class="t gray" x="16" y="278">[Auto-Continue] ~15 min until resume</text>
+  <text class="t gray" x="16" y="298">[Auto-Continue] ~1 min until resume</text>
+
+  <text class="t green" x="16" y="328">[Auto-Continue] Resuming session now!</text>
+
+  <text class="t green" x="16" y="358">  ✓ Resumed! Continuing your task...</text>
+  <text class="t green" x="16" y="378">  ✓ Task completed successfully!</text>
+
+  <!-- Cursor blink -->
+  <rect x="16" y="392" width="8" height="16" fill="#cdd6f4" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0;0.7" dur="1.2s" repeatCount="indefinite"/>
+  </rect>
+</svg>
