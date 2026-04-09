@@ -1,0 +1,47 @@
+{
+  "name": "claude-auto-continue",
+  "version": "1.0.0",
+  "description": "Auto-resume Claude Code sessions when rate limits reset. Transparent PTY wrapper that keeps your window open.",
+  "main": "src/wrapper.js",
+  "bin": {
+    "auto-continue": "./bin/auto-continue.js",
+    "ac": "./bin/auto-continue.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "hooks/",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node bin/auto-continue.js",
+    "test": "node test/detector.test.js && node test/integration.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YaoZeyuan/claude-auto-continue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/YaoZeyuan/claude-auto-continue/issues"
+  },
+  "homepage": "https://github.com/YaoZeyuan/claude-auto-continue#readme",
+  "author": "YaoZeyuan",
+  "keywords": [
+    "claude",
+    "claude-code",
+    "rate-limit",
+    "auto-continue",
+    "auto-resume",
+    "cli",
+    "pty"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "node-pty": "^1.0.0",
+    "strip-ansi": "^6.0.1"
+  }
+}
