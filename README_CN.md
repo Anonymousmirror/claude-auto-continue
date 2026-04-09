@@ -1,6 +1,6 @@
 # claude-auto-continue
 
-[![CI](https://github.com/YaoZeyuan/claude-auto-continue/actions/workflows/test.yml/badge.svg)](https://github.com/YaoZeyuan/claude-auto-continue/actions/workflows/test.yml)
+[![CI](https://github.com/Anonymousmirror/claude-auto-continue/actions/workflows/test.yml/badge.svg)](https://github.com/Anonymousmirror/claude-auto-continue/actions/workflows/test.yml)
 [![npm version](https://img.shields.io/npm/v/claude-auto-continue.svg)](https://www.npmjs.com/package/claude-auto-continue)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -124,7 +124,7 @@ auto-continue stop
 ## 开发
 
 ```bash
-git clone https://github.com/YaoZeyuan/claude-auto-continue.git
+git clone https://github.com/Anonymousmirror/claude-auto-continue.git
 cd claude-auto-continue
 npm install
 

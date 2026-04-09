@@ -20,13 +20,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YaoZeyuan/claude-auto-continue.git"
+    "url": "git+https://github.com/Anonymousmirror/claude-auto-continue.git"
   },
   "bugs": {
-    "url": "https://github.com/YaoZeyuan/claude-auto-continue/issues"
+    "url": "https://github.com/Anonymousmirror/claude-auto-continue/issues"
   },
-  "homepage": "https://github.com/YaoZeyuan/claude-auto-continue#readme",
-  "author": "YaoZeyuan",
+  "homepage": "https://github.com/Anonymousmirror/claude-auto-continue#readme",
+  "author": "Anonymousmirror",
   "keywords": [
     "claude",
     "claude-code",
