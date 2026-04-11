@@ -134,11 +134,11 @@ assert(r9 !== null, 'detects relative time (days)');
 assert(r9 && Math.abs(r9.msUntilReset - 3 * 86400_000) < 5000, 'relative days correct');
 
 const d10 = new RateLimitDetector();
-const r10 = d10.feed("usage limit \u00b7 resets in 5 hours");
+const r10 = d10.feed("usage limit reached \u00b7 resets in 5 hours");
 assert(r10 !== null, 'detects relative time (hours)');
 
 const d11 = new RateLimitDetector();
-const r11 = d11.feed("rate limit \u00b7 resets in 2 hours and 30 minutes");
+const r11 = d11.feed("You've hit your 5-hour limit \u00b7 resets in 2 hours and 30 minutes");
 assert(r11 !== null, 'detects compound relative time');
 assert(
   r11 && Math.abs(r11.msUntilReset - (2 * 3600_000 + 30 * 60_000)) < 5000,
@@ -154,13 +154,13 @@ assert(r12 !== null, `detects calendar date (${futureDateStr})`);
 // Slash date
 const d13 = new RateLimitDetector();
 const slashDate = `${futureDate.getMonth() + 1}/${fmDay}`;
-const r13 = d13.feed(`weekly limit \u00b7 resets ${slashDate}`);
+const r13 = d13.feed(`You've hit your weekly limit \u00b7 resets ${slashDate}`);
 assert(r13 !== null, `detects slash date (${slashDate})`);
 
-// "weekly limit" keyword with clock time
+// Weekly limit phrasing with clock time
 const d14 = new RateLimitDetector();
-const r14 = d14.feed(`weekly limit \u00b7 resets ${FUTURE}`);
-assert(r14 !== null, '"weekly limit" keyword with clock time');
+const r14 = d14.feed(`You've hit your weekly limit \u00b7 resets ${FUTURE}`);
+assert(r14 !== null, '"hit your weekly limit" with clock time');
 
 // Fallback: rate limit without parseable time
 const d15 = new RateLimitDetector();
@@ -175,6 +175,46 @@ assert(
 const d16 = new RateLimitDetector();
 const r16 = d16.feed("hit your limit \u00b7 resets in 10 days");
 assert(r16 === null, 'rejects reset times beyond 7 days');
+
+// ── claude-hud false positive guards ──
+console.log('\nclaude-hud false positive guards:');
+
+const dH1 = new RateLimitDetector();
+assert(
+  dH1.feed("5h: 35% \u00b7 resets 14:00 | weekly: 20%") === null,
+  'ignores HUD line: percentage + resets without "hit your" / "limit reached"'
+);
+
+const dH2 = new RateLimitDetector();
+assert(
+  dH2.feed("rate limit: 40% remaining \u00b7 resets 3pm") === null,
+  'ignores HUD line: "rate limit: X%"'
+);
+
+const dH3 = new RateLimitDetector();
+assert(
+  dH3.feed("usage limit 20% \u00b7 resets Monday") === null,
+  'ignores HUD line: "usage limit X%"'
+);
+
+const dH4 = new RateLimitDetector();
+assert(
+  dH4.feed("weekly limit: 15% \u00b7 resets in 3 days") === null,
+  'ignores HUD line: "weekly limit X%"'
+);
+
+// Proximity guard: trigger phrase and a far-away resets must NOT bind together.
+// Far-away resets outside the 120-char forward window should be ignored, and
+// the detector should fall back to the ~5-minute default instead of using the
+// unrelated resets.
+const dH5 = new RateLimitDetector();
+const far = "You've hit your limit" + " ".repeat(300) + `resets ${FUTURE}`;
+const rH5 = dH5.feed(far);
+assert(rH5 !== null, 'proximity: far-away resets still produces a fallback detection');
+assert(
+  rH5 && rH5.msUntilReset > 0 && rH5.msUntilReset <= 6 * 60_000,
+  'proximity: far-away resets is ignored, fallback is ~5 min'
+);
 
 console.log(`\n${passed} passed, ${failed} failed\n`);
 process.exit(failed > 0 ? 1 : 0);

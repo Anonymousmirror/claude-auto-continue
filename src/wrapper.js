@@ -193,6 +193,10 @@ function createWrapper(claudeArgs, opts = {}) {
   ptyProcess.onData((data) => {
     process.stdout.write(data);
 
+    // Already handling a limit — don't re-enter detection. Prevents HUD
+    // status-line re-renders from disturbing the scheduled resume.
+    if (waitingForResume) return;
+
     const detection = detector.feed(data);
     if (detection) {
       scheduleResume(detection);

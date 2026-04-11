@@ -31,9 +31,12 @@ const RESET_DATE_PATTERN =
 const RESET_SLASH_DATE_PATTERN =
   /resets?\s+(\d{1,2})\/(\d{1,2})/i;
 
-// Broader pattern to detect that a rate-limit event occurred at all.
+// Active rate-limit event phrases only. Deliberately strict so that passive
+// status displays (e.g. claude-hud "weekly limit: 20% · resets Mon") do not
+// match. Real Claude Code messages always include "hit your ... limit" or
+// "limit reached".
 const RATE_LIMIT_PATTERN =
-  /(?:hit your limit|limit reached|rate.?limit|usage limit|weekly limit)/i;
+  /hit your(?:\s+[\w-]+){0,3}\s+limit|limit reached/i;
 
 /**
  * Strip ANSI escape sequences so regex can match against plain text.
@@ -179,23 +182,36 @@ class RateLimitDetector {
     const plain = stripAnsi(chunk);
     this._buffer += plain;
 
-    // Keep buffer at a manageable size (last 2KB)
-    if (this._buffer.length > 2048) {
-      this._buffer = this._buffer.slice(-2048);
+    // Small buffer — real messages are < 100 bytes; a smaller window limits
+    // contamination from HUD re-renders accumulating in the buffer.
+    if (this._buffer.length > 512) {
+      this._buffer = this._buffer.slice(-512);
     }
 
     // Check cooldown
     const now = Date.now();
     if (now - this._lastDetection < this._cooldown) return null;
 
-    // Must match the broader rate-limit indicator
-    if (!RATE_LIMIT_PATTERN.test(this._buffer)) return null;
+    // Locate the active rate-limit trigger phrase. Only passive status
+    // displays without this phrase reach here as false matches in rare cases.
+    const triggerMatch = this._buffer.match(RATE_LIMIT_PATTERN);
+    if (!triggerMatch) return null;
+
+    // Proximity window: the reset-time must appear near the trigger phrase,
+    // not somewhere else in the rolling buffer. 40 chars back, 120 forward
+    // comfortably covers real messages like
+    //   "You've hit your limit · resets 11pm (Asia/Shanghai)"
+    const triggerStart = triggerMatch.index;
+    const triggerEnd = triggerStart + triggerMatch[0].length;
+    const winStart = Math.max(0, triggerStart - 40);
+    const winEnd = Math.min(this._buffer.length, triggerEnd + 120);
+    const window = this._buffer.slice(winStart, winEnd);
 
     let resetTime = null;
     let rawMatch = '';
 
     // Strategy 1: Clock time (existing) — "resets 3pm"
-    const m1 = this._buffer.match(RESET_PATTERN);
+    const m1 = window.match(RESET_PATTERN);
     if (m1) {
       const hm = parseTimeStr(m1[1]);
       if (hm) {
@@ -206,7 +222,7 @@ class RateLimitDetector {
 
     // Strategy 2: Day of week — "resets Monday"
     if (!resetTime) {
-      const m2 = this._buffer.match(RESET_DAY_PATTERN);
+      const m2 = window.match(RESET_DAY_PATTERN);
       if (m2) {
         resetTime = parseDayOfWeek(m2[1]);
         rawMatch = m2[0];
@@ -215,7 +231,7 @@ class RateLimitDetector {
 
     // Strategy 3: Relative time — "resets in 3 days"
     if (!resetTime) {
-      const m3 = this._buffer.match(RESET_RELATIVE_PATTERN);
+      const m3 = window.match(RESET_RELATIVE_PATTERN);
       if (m3) {
         const ms = parseRelativeTime(m3[1], m3[2], m3[3], m3[4]);
         if (ms > 0) {
@@ -227,7 +243,7 @@ class RateLimitDetector {
 
     // Strategy 4: Calendar date — "resets Apr 14"
     if (!resetTime) {
-      const m4 = this._buffer.match(RESET_DATE_PATTERN);
+      const m4 = window.match(RESET_DATE_PATTERN);
       if (m4) {
         resetTime = parseMonthDate(m4[1], parseInt(m4[2], 10));
         rawMatch = m4[0];
@@ -236,7 +252,7 @@ class RateLimitDetector {
 
     // Strategy 5: Slash date — "resets 4/14"
     if (!resetTime) {
-      const m5 = this._buffer.match(RESET_SLASH_DATE_PATTERN);
+      const m5 = window.match(RESET_SLASH_DATE_PATTERN);
       if (m5) {
         const month = parseInt(m5[1], 10) - 1;
         const day = parseInt(m5[2], 10);
